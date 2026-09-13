@@ -1,0 +1,21 @@
+[Unit]
+Description=Nextcloud outbound tunnel to Render
+Wants=network-online.target
+After=network-online.target docker.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+DynamicUser=true
+EnvironmentFile=/etc/nextcloud-render-relay.env
+ExecStart=/usr/local/bin/chisel client --auth ${CHISEL_AUTH} --fingerprint ${CHISEL_FINGERPRINT} ${CHISEL_SERVER} R:127.0.0.1:8081:127.0.0.1:11000
+Restart=always
+RestartSec=5s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
+
