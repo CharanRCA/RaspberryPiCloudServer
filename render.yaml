@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: raspberrypi-nextcloud-relay
+    runtime: go
+    plan: free
+    region: singapore
+    branch: main
+    autoDeployTrigger: off
+    buildCommand: GOBIN=$PWD/bin go install github.com/jpillora/chisel@v1.11.5
+    startCommand: ./bin/chisel server --host 0.0.0.0 --port $PORT --reverse --backend http://127.0.0.1:8081 --keepalive 10s
+    envVars:
+      - key: AUTH
+        sync: false
+      - key: KEY
+        sync: false
+
