@@ -10,10 +10,10 @@ web service, so no inbound router port or public IPv4 address is required.
 
 ## Render service
 
-- Source: `https://github.com/jpillora/chisel`
+- Source: this repository; the build downloads the pinned upstream release
 - Version: `v1.11.5`
 - Runtime: Go
-- Build command: `go build -ldflags="-s -w" -o chisel .`
+- Build command: `GOBIN=$PWD/bin go install github.com/jpillora/chisel@v1.11.5`
 - Start command: `./chisel server --host 0.0.0.0 --port $PORT --reverse --backend http://127.0.0.1:8081 --keepalive 10s`
 - Secret environment variables: `AUTH` and `KEY`
 
