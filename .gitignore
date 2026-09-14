@@ -1,4 +1,5 @@
 # Local credentials and environment overrides
+.secrets/
 .env
 .env.*
 !.env.example
