@@ -1,0 +1,17 @@
+[Unit]
+Description=Restrict Raspberry Pi cloud administration ports
+Documentation=https://github.com/CharanRCA/RaspberryPiCloudServer
+After=network-pre.target
+Before=network.target ssh.service docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=-/usr/sbin/nft delete table inet cloudstorage_security
+ExecStart=/usr/sbin/nft -f /etc/cloudstorage-security.nft
+ExecReload=/usr/sbin/nft -f /etc/cloudstorage-security.nft
+ExecStop=/usr/sbin/nft delete table inet cloudstorage_security
+
+[Install]
+WantedBy=multi-user.target
+
