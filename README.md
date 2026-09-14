@@ -102,3 +102,14 @@ does not use `192.168.1.0/24`.
 This policy intentionally does not open a public Nextcloud port. Public HTTPS
 should only be added after selecting and validating the final ingress method.
 
+## SSH authentication
+
+Use an Ed25519 key for the `cloud` account and verify a second key-only SSH
+connection before disabling passwords. The sample
+`pi/00-cloud-storage.conf` disables password and keyboard-interactive login,
+blocks direct root login, and restricts SSH to the `cloud` account.
+
+The private key belongs on the administrator's computer only. Store it outside
+the repository with restrictive filesystem permissions and keep a protected
+offline backup. Never copy it to the Pi or GitHub.
+
