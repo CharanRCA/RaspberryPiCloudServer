@@ -1,0 +1,25 @@
+# Local credentials and environment overrides
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.secret
+credentials*
+secrets*
+
+# AIO configuration and backups may contain deployment-specific data
+configuration.json
+configuration.json.*
+*.bak
+borg/
+
+# Local tooling and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
