@@ -81,3 +81,20 @@ passes all WebDAV methods unchanged. Practical choices are:
 Do not expose the AIO management port (`8080`) publicly. Only the Nextcloud HTTPS
 endpoint should be published.
 
+## Host firewall
+
+The Pi can receive unsolicited traffic over globally routed IPv6 even when the
+router has no IPv4 port-forward. The sample nftables policy therefore keeps SSH
+(`22`) and the AIO management console (`8080`) reachable from the local
+`192.168.1.0/24` LAN and Tailscale, while dropping those ports from every other
+source.
+
+Install `pi/cloudstorage-security.nft` as `/etc/cloudstorage-security.nft` and
+`pi/cloudstorage-firewall.service` as
+`/etc/systemd/system/cloudstorage-firewall.service`, then enable the service.
+Adjust the LAN subnet in the nftables file before installation if your network
+does not use `192.168.1.0/24`.
+
+This policy intentionally does not open a public Nextcloud port. Public HTTPS
+should only be added after selecting and validating the final ingress method.
+
