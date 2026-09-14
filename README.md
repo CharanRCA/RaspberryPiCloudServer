@@ -1,5 +1,7 @@
 # Raspberry Pi Nextcloud relay on Render
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 > [!WARNING]
 > Render's public web-service ingress is not compatible with Nextcloud WebDAV.
 > A live test on 2026-09-14 showed `PROPFIND` returning HTTP `405` through the
@@ -28,6 +30,8 @@ web service, so no inbound router port or public IPv4 address is required.
 
 The `AUTH` value is a randomly generated `username:password`. `KEY` keeps the
 server identity stable across Render restarts. Neither secret belongs in Git.
+Copy `pi/nextcloud-render-relay.env.example` outside the repository and replace
+its placeholders; never edit the tracked example with real values.
 
 ## Pi service
 
