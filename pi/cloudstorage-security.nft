@@ -1,0 +1,18 @@
+#!/usr/sbin/nft -f
+
+table inet cloudstorage_security {
+	chain input {
+		type filter hook input priority -5; policy accept;
+
+		ct state established,related accept
+		iifname "lo" accept
+		iifname "tailscale0" accept
+
+		# Keep administration available from the local LAN.
+		ip saddr 192.168.1.0/24 tcp dport { 22, 8080 } accept
+
+		# Never expose SSH or the Nextcloud AIO management console publicly.
+		tcp dport { 22, 8080 } drop
+	}
+}
+
