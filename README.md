@@ -1,5 +1,14 @@
 # Raspberry Pi Nextcloud relay on Render
 
+> [!WARNING]
+> Render's public web-service ingress is not compatible with Nextcloud WebDAV.
+> A live test on 2026-09-14 showed `PROPFIND` returning HTTP `405` through the
+> Render URL while the same request returned `207` directly from Nextcloud on
+> the Pi. The Files web interface consequently displays "Folder not found",
+> and official sync clients cannot list folders reliably. This repository's
+> Render configuration is retained as an experimental HTTP tunnel, not as a
+> production-ready Nextcloud endpoint.
+
 This setup keeps Nextcloud and its data on the Raspberry Pi. A pinned Chisel
 client on the Pi opens an authenticated outbound WebSocket tunnel to a Render
 web service, so no inbound router port or public IPv4 address is required.
@@ -14,7 +23,7 @@ web service, so no inbound router port or public IPv4 address is required.
 - Version: `v1.11.5`
 - Runtime: Go
 - Build command: `GOBIN=$PWD/bin go install github.com/jpillora/chisel@v1.11.5`
-- Start command: `./chisel server --host 0.0.0.0 --port $PORT --reverse --backend http://127.0.0.1:8081 --keepalive 10s`
+- Start command: `./bin/chisel server --host 0.0.0.0 --port $PORT --reverse --backend http://127.0.0.1:8081 --keepalive 10s`
 - Secret environment variables: `AUTH` and `KEY`
 
 The `AUTH` value is a randomly generated `username:password`. `KEY` keeps the
@@ -46,4 +55,29 @@ after interruptions.
 The existing Tailscale endpoint should remain configured until the Render URL
 has passed browser, WebDAV, upload, and download tests. Changing the primary AIO
 domain is the final cutover step and should be backed up first.
+
+Run `pi/check-nextcloud-endpoint.sh` before making any endpoint the primary AIO
+domain. A valid Nextcloud endpoint must pass the WebDAV `PROPFIND` check; loading
+the login page or uploading a single file is not sufficient.
+
+## Why the Files page can show "Folder not found"
+
+Nextcloud loads directory contents with WebDAV methods such as `PROPFIND`. The
+Render endpoint currently responds with an empty HTTP `405` before the request
+reaches the Pi. Normal `GET` and `PUT` requests can still succeed, which makes a
+partial relay look healthy even though the web and mobile file browsers are
+broken.
+
+For a complete public deployment without Tailscale, use an ingress path that
+passes all WebDAV methods unchanged. Practical choices are:
+
+- a domain plus router port-forwarding to a TLS reverse proxy on the Pi, when
+  the internet connection has a reachable public address; or
+- an outbound tunnel designed for publishing HTTP origins and verified with
+  the included endpoint check (for example, a named Cloudflare Tunnel with a
+  domain); or
+- a small VPS with a raw TCP tunnel when the home connection is behind CGNAT.
+
+Do not expose the AIO management port (`8080`) publicly. Only the Nextcloud HTTPS
+endpoint should be published.
 
